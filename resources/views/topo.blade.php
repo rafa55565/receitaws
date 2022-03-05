@@ -12,7 +12,6 @@
         <ul class="nav nav-pills">
             <li class="nav-item"><a href="#" class="nav-link active" aria-current="page">Ínicio</a></li>
             <li class="nav-item"><a href="#" class="nav-link">Fornecedores</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Clientes</a></li>
         </ul>
     </header>
 </div>

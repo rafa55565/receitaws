@@ -50,13 +50,9 @@
 
 		_this.atualizar = function atualizar(form, id) {
 			return $.ajax({
-				enctype: 'multipart/form-data',
-				type: "POST",
-				url: _this.rota() + '/update-form/' + id,
+				type: "PUT",
+				url: `${_this.rota()}/${id}`,
 				data: form,
-				processData: false, // impedir que o jQuery tranforma a "data" em querystring
-				contentType: false, // desabilitar o cabeçalho "Content-Type"
-				cache: false, // desabilitar o "cache"
 			});
 		};
 

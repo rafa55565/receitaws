@@ -19,9 +19,11 @@ class CreateEnderecoTable extends Migration
             $table->string('logradouro');
             $table->integer('numero');
             $table->string('complemento');
+            $table->string('bairro');
             $table->string('cidade');
             $table->string('uf',2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

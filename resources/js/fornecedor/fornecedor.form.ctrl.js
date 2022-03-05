@@ -15,7 +15,6 @@
       _this.cancelarModoEdicao = $('#cancelar_edicao');
       _this.obj = null;
 
-      _this.avatar = null;
       var pegarId = function pegarId(url, palavra) {
 
          // Terminando com "ID/palavra"
@@ -57,34 +56,12 @@
 
             jqXHR.done(function (resposta) {
                if (resposta.status) {
-
                   toastr.success(resposta.mensagem);
-                  if(_this.avatar !=  null){
-                     jqXHR = servicoFornecedor.atualizarAvatar(function (){
-                        var formData =  new FormData();
-                        formData.append('avatar', _this.avatar);
-                        return formData;
-                     }, _this.obj.id).done(function(response){
-                        if (resposta.status) {
-                           router.navigate('/colaboradores');
-                           toastr.success(resposta.mensagem);
-                        }
-                        else {
-                           terminado();
-                           if (resposta != undefined && resposta.erros)  distribuirErros(_this.formulario, resposta.erros);
 
-                           if (resposta != undefined && resposta.mensagem) toastr.error(resposta.mensagem);
-                        }
-                     });
-                  }
-                  else{
-                     router.navigate('/colaboradores');
-                  }
+                  router.navigate('/fornecedores');
                }
                else {
                   terminado();
-                  if (resposta != undefined && resposta.erros)  distribuirErros(_this.formulario, resposta.erros);
-
                   if (resposta != undefined && resposta.mensagem) toastr.error(resposta.mensagem);
                }
 
@@ -96,15 +73,29 @@
 
       // Obtém o conteúdo atual do form como um objeto
       _this.conteudo = function conteudo() {
-         var data = new FormData(_this.formulario[0]);
-         return data;
+         return  (window.location.href.search('editar') != -1) ? {
+            id :   $('#id').val(),
+            cnpj :   $('#cnpj').val(),
+            nome :   $('#nome').val(),
+            nome_fantasia :   $('#nome_fantasia').val(),
+            email :   $('#email').val(),
+            telefone :   $('#telefone').val(),
+            cep :   $('#cep').val(),
+            logradouro :   $('#logradouro').val(),
+            numero :   $('#numero').val(),
+            complemento :   $('#complemento').val(),
+            bairro :   $('#bairro').val(),
+            cidade :   $('#cidade').val(),
+            uf :   $('#uf').val(),
+			} :  new FormData(_this.formulario[0]);
+
       };
 
       _this.configurarBotoes = function configurarBotoes() {
          _this.botaoSubmissao.on('click', _this.salvar);
-         
-         $('#pesquisar-cnpj').on('click', function() {
-            var cnpj = $('#cnpj').val().replace(/[^\d]+/g,'');
+
+         $('#pesquisar-cnpj').on('click', function () {
+            var cnpj = $('#cnpj').val().replace(/[^\d]+/g, '');
             let servicoReceitaWs = new app.ServicoReceitaWs();
             var jqXHR = servicoReceitaWs.consultarCNPJ(cnpj).done(function (resposta) {
                $('#nome').val(resposta.nome);
@@ -122,108 +113,42 @@
          });
 
          $("#cnpj").inputmask("99.999.999/9999-99");
+         $("#telefone").inputmask("(99)99999-9660");
       };
 
       _this.definirForm = function definirForm(status) {
          _this.formulario.on('submit', false);
          _this.configurarBotoes();
+         if (window.location.href.search('editar') != -1) {
+            servicoFornecedor.editForm(pegarId(window.location.href, 'editar')).done(_this.desenhar);
+         }
       }
 
       // Desenha o objeto no formulário
       _this.desenhar = function desenhar(resposta) {
-         _this.obj = resposta.colaborador.original;
+         _this.obj = resposta.fornecedor.original;
          $('#id').val(_this.obj.id).trigger('focus').trigger('blur');
+         $('#cnpj').val(_this.obj.cnpj).trigger('focus').trigger('blur');
          $('#nome').val(_this.obj.nome).trigger('focus').trigger('blur');
-         $('#sobrenome').val(_this.obj.sobrenome).trigger('focus').trigger('blur');
-         $('#email').val(_this.obj.user.email).trigger('focus').trigger('blur');
-         $('#login').val(_this.obj.user.name).trigger('focus').trigger('blur');
-         if(_this.obj.avatar != null)$('.avatar:first').attr('src', _this.obj.avatar.caminho)
+         $('#nome_fantasia').val(_this.obj.nome_fantasia).trigger('focus').trigger('blur');
+         $('#email').val(_this.obj.email).trigger('focus').trigger('blur');
+         $('#telefone').val(_this.obj.telefone).trigger('focus').trigger('blur');
+         $('#cep').val(_this.obj.endereco.cep).trigger('focus').trigger('blur');
+         $('#logradouro').val(_this.obj.endereco.logradouro).trigger('focus').trigger('blur');
+         $('#numero').val(_this.obj.endereco.numero).trigger('focus').trigger('blur');
+         $('#complemento').val(_this.obj.endereco.complemento).trigger('focus').trigger('blur');
+         $('#bairro').val(_this.obj.endereco.bairro).trigger('focus').trigger('blur');
+         $('#cidade').val(_this.obj.endereco.cidade).trigger('focus').trigger('blur');
+         $('#uf').val(_this.obj.endereco.uf).trigger('focus').trigger('blur');
 
-         if (_this.obj.lojas != null) {
-            for (const index in _this.obj.lojas) {
-               var loja = _this.obj.lojas[index];
-               $('#lojas option').each(function (i, value) {
-                  if (parseInt($(this).val()) == loja.id) $(this).attr('selected', true);
-               });
-            }
-            $('#lojas').formSelect().trigger('focus').trigger('blur');
-         }
-
-         if (_this.obj.setor != null) {
-            for (const index in _this.obj.lojas) {
-               var setor = _this.obj.setor;
-               $('#setor option').each(function (i, value) {
-                  if (parseInt($(this).val()) == setor.id) $(this).attr('selected', true);
-               });
-            }
-            $('#setor').formSelect().trigger('focus').trigger('blur');
-         }
-
-         if (window.location.href.search('visualizar') != -1) {
-            _this.formulario.desabilitar(true);
-            _this.formulario.find('#botoes').desabilitar(false);
-            _this.formulario.find('#botoes').prepend(' <div class="col col-md-4 col-12 col-sm-5 col-lg-4"><button type="submit" id="remover" class="waves-effect waves-light btn white grey-text text-darken-4 col-12 quebra-linha"><i class="mdi mdi-delete red-text text-darken-4"></i>Remover</button></div>').promise().done(function () {
-               $('#botoes').find('#remover').on('click', _this.remover);
-            });
-				_this.formulario.find('#botoes').prepend(' <div class="col col-md-4 col-12 col-sm-5 col-lg-4"><button type="button" id="editar" class="waves-effect waves-light btn white grey-text text-darken-4 col-12 quebra-linha"><i class="mdi mdi-checkbox-marked-circle-outline orange-text text-accent-4 "></i>Editar</button></div>').promise().done(function () {
-					_this.formulario.find('#editar').on('click', function (event) {
-                  router.navigate('/editar-colaborador/' + _this.obj.id);
-               });
-            });
-
-         } else if (window.location.href.search('editar') != -1) {
-            _this.alterar = true;
-            var html = '';
-            html += '<div class="col col-md-4 col-12 col-sm-5 col-lg-4">';
-            html += '<button id="salvar" type="submit" class="waves-effect waves-light btn white grey-text text-darken-4 col-12 quebra-linha">';
-            html += '<i class="mdi mdi-checkbox-marked-circle-outline orange-text text-accent-4 ">';
-            html += '</i>salvar</button>';
-            html += '</div>';
-
-            _this.formulario.find('#botoes').prepend(html).promise().done(function () {
-               $('#salvar').on('click', _this.salvar);
-            });
+          if (window.location.href.search('editar') != -1) {
+            $('#salvar').on('click', _this.salvar);
          }
 
       };
 
       _this.salvar = function salvar() {
          _this.formulario.validate(criarOpcoesValidacao());
-      };
-
-      _this.remover = function remover() {
-         BootstrapDialog.show({
-            type: BootstrapDialog.TYPE_DANGER,
-            title: 'Deseja remover este colaborador?',
-            message: 'Id: ' + _this.obj.id + '.<br> Colaborador: ' + (_this.obj.nome + ' ' + _this.obj.sobrenome) + '.',
-            size: BootstrapDialog.SIZE_LARGE,
-            buttons: [{
-               label: '<u>S</u>im',
-               hotkey: 'S'.charCodeAt(0),
-               action: function (dialog) {
-                  servicoFornecedor.remover(_this.obj.id).done(function (resposta) {
-                     if (resposta.status) {
-                        router.navigate('/colaboradores');
-                        toastr.success('Colaborador removido com sucesso!');
-                        dialog.close();
-
-                     }
-                     else {
-                        if (resposta != undefined && resposta.mensagem) toastr.error(resposta.mensagem);
-
-                        dialog.close();
-                     }
-                  });
-               }
-            }, {
-               label: '<u>N</u>ão',
-               hotkey: 'N'.charCodeAt(0),
-               action: function (dialog) {
-                  dialog.close();
-               }
-            }
-            ]
-         });
       };
 
       // Configura os eventos do formulário

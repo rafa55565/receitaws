@@ -27,9 +27,10 @@
 
    // Rotas: adicione sua rota ACIMA das existentes, a seguir. -Rafael
    window.rotas = [
-      { rota: '/', caminho: criarRotaPara('inicio.html'), descicao: "Ínicio", caminhoVolta: '/' },      // 404
-      { rota: '/fornecedores', caminho: criarRotaPara('fornecedores.html'), descricao: "Fornecedores", caminhoVolta: '/' },      // 404
-      { rota: '/fornecedores/cadastrar', caminho: criarRotaPara('fornecedor-form.html'), descricao: "Cadstrar Fonecedor", caminhoVolta: '/' },      // 404
+      { rota: '/', caminho: criarRotaPara('inicio.html'), descicao: "Ínicio", caminhoVolta: '/' },  
+      { rota: '/fornecedores', caminho: criarRotaPara('fornecedores.html'), descricao: "Fornecedores", caminhoVolta: '/' },  
+      { rota: '/fornecedores/cadastrar', caminho: criarRotaPara('fornecedor-form.html'), descricao: "Cadstrar Fonecedor", caminhoVolta: '/' },  
+      { rota: '/fornecedores/editar/:id', caminho: criarRotaPara('fornecedor-form.html'), descricao: "Editar Fonecedor", caminhoVolta: '/' },  
       {
          rota: '/*', caminho: function (req, e) {
             if (!e.parent()) {

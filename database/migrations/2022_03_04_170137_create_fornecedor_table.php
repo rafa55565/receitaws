@@ -19,12 +19,13 @@ class CreateFornecedorTable extends Migration
             $table->string('email',50);
             $table->string('telefone', 12);
             $table->string('nome_fantasia',50);
-            $table->string('cnpj', 18);
+            $table->string('cnpj', 14);
             $table->unsignedInteger('endereco_id');
 
-            $table->foreign('endereco_id')->references('id')->on('endereco');            
-            // $table->index(['endereco_id']);
+            // $table->foreign('endereco_id')->references('id')->on('endereco');            
+            $table->index(['endereco_id']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -268,9 +268,10 @@ var app = {
 
    // Rotas: adicione sua rota ACIMA das existentes, a seguir. -Rafael
    window.rotas = [
-      { rota: '/', caminho: criarRotaPara('inicio.html'), descicao: "Ínicio", caminhoVolta: '/' },      // 404
-      { rota: '/fornecedores', caminho: criarRotaPara('fornecedores.html'), descricao: "Fornecedores", caminhoVolta: '/' },      // 404
-      { rota: '/fornecedores/cadastrar', caminho: criarRotaPara('fornecedor-form.html'), descricao: "Cadstrar Fonecedor", caminhoVolta: '/' },      // 404
+      { rota: '/', caminho: criarRotaPara('inicio.html'), descicao: "Ínicio", caminhoVolta: '/' },  
+      { rota: '/fornecedores', caminho: criarRotaPara('fornecedores.html'), descricao: "Fornecedores", caminhoVolta: '/' },  
+      { rota: '/fornecedores/cadastrar', caminho: criarRotaPara('fornecedor-form.html'), descricao: "Cadstrar Fonecedor", caminhoVolta: '/' },  
+      { rota: '/fornecedores/editar/:id', caminho: criarRotaPara('fornecedor-form.html'), descricao: "Editar Fonecedor", caminhoVolta: '/' },  
       {
          rota: '/*', caminho: function (req, e) {
             if (!e.parent()) {
@@ -477,13 +478,9 @@ var app = {
 
 		_this.atualizar = function atualizar(form, id) {
 			return $.ajax({
-				enctype: 'multipart/form-data',
-				type: "POST",
-				url: _this.rota() + '/update-form/' + id,
+				type: "PUT",
+				url: `${_this.rota()}/${id}`,
 				data: form,
-				processData: false, // impedir que o jQuery tranforma a "data" em querystring
-				contentType: false, // desabilitar o cabeçalho "Content-Type"
-				cache: false, // desabilitar o "cache"
 			});
 		};
 
@@ -514,103 +511,44 @@ var app = {
 (function (window, app, $, toastr) {
    'use strict';
 
-   function ControladoraListagemFornecedor(ServicoFornecedor) {
+   function ControladoraListagemFornecedor(servicoFornecedor) {
       var _this = this;
       var _cont = 0;
-      var _tabela = null;
-      _this.botaoEditar = $('#editar');
-      _this.botaoRemover = $('#remover');
-      _this.idTabela = $('#fornecedores');
+      
+      _this.tabela = $('#fornecedor');
 
       //Configura a tabela
-      _this.opcoesDaTabela = function opcoesDaTabela() {
-         var objeto = new Object();
-         objeto.ajax = ServicoFornecedor.rota();
-
-         objeto.carregando = true;
-         objeto.pageLength = 20;
-         objeto.lengthMenu = [20, 30, 40, 100];
-         objeto.searching = true;
-         objeto.ordering = true;
-         objeto.searching = true;
-         objeto.searchDelay = 600;
-         objeto.order = 'DESC';
-         objeto.cadastrarLink = 'cadastrar_fornecedor_link';
-         objeto.columnDefs = function (data) {
-            let imagem = (data.avatar != null) ? data.avatar.caminho : window.location.pathname + 'images/avatar-padrao.png';
-
-            var lojas = '<br>';
-
-            for (const key in data.lojas) {
-               if (data.lojas.hasOwnProperty(key)) {
-                  const element = data.lojas[key];
-                  lojas += 'Razão Social : ' + element.razao_social + ' Nome Fantasia: ' +  element.nome_fantasia +'; <br>'
-               }
-            }
-            var html = '';
-            html += '<div class="col col-12 col-lg-12 col-md-12 col-sm-12 mb-0-dto">';
-            html += '<div class="row">';
-
-            html += '<div class="col co-lg-2 col-md-2 col-sm-2 col-4 ">';
-               html += '<img src="'+ imagem + '" class="avatar"></img>';
-            html += '</div>';
-            
-            html += '<div class="col co-lg-10 col-md-10 col-sm-10 col-8">'
-               html += '<p class="f-12-dto"><strong>Nome : </strong>' + data.nome + ' ' + data.sobrenome + '</p>'
-               html += '<p class="f-12-dto"><strong>Email : </strong>' + data.user.email + '</p>'
-
-               html += '<p class="f-12-dto"><strong>Setor : </strong>' + data.setor.titulo + '</p>';
-               html += '<p class="f-12-dto"> <strong>Lojas de atuação:</strong> '+ lojas +'</p>';
-               html += '<p class="f-12-dto"> <strong>Usuário: </strong>  ' + data.user.name + '</p>';
-            html += '</div>';
-
-            html += '<div class="col col-12 col-lg-12 col-md-12 col-sm-12 mb-0-dto opc_tabela">';
-               html += '<div class="col col-12 col-lg-4 col-md-4 col-sm-4 mb-0-dto">';
-                  html += '<p class="mb-0-dto">';
-                     html += '<a href="#" class="detalhes-dto visualizar_checklist">';
-                        html += '<i class="mdi mdi-eye-outline small orange-text text-accent-4"></i>';
-                        html += 'VER DETALHES';
-                     html += '</a>';
-                  html += '</p>';
-               html += '</div>';
-
-               html += '<div class="col col-12 col-lg-4 col-md-4 col-sm-4 mb-0-dto">';
-                  html += '<p class="mb-0-dto">';
-                     html += '<a href="#" parametros="Usuario/' + data.usuario_id + '" class="detalhes-dto configurar_acessos_link">';
-                        html += '<i class="mdi mdi-key small orange-text text-accent-4"></i>';
-                        html += 'ACESSOS';
-                     html += '</a>';
-                  html += '</p>';
-                  html += '</div>';
-                  html += '</div>';
-               html += '</div>';
-            html += '</div>';
-
-
-            return html;
-         };
-         objeto.rowsCallback = function (resposta) {
-            $('.visualizar_checklist').on('click', function (event) {
-               event.preventDefault();
-               var objeto = _tabela.getObjetos()[$(this).parents('.listagem-padrao-item').index()];
-               router.navigate('/visualizar-fornecedor/' + objeto.id);
-            });
-         }
-         return objeto;
-      };
-
       _this.atualizar = function atualizar() {
          _tabela.ajax.reload();
       };
 
+
       _this.configurar = function configurar() {
-         _tabela = $('#fornecedor').DataTable({
-            responsive: true
-          });
-         _this.botaoCadastrar.on('click', _this.cadastrar);
-         _this.botaoEditar.on('click', _this.editar)
-         _this.botaoAtualizar.on('click', _this.atualizar);
-         _this.botaoRemover.on('click', _this.remover);;
+         var jqXHR = servicoFornecedor.todos().done(function (resposta) {
+            var fonecedoresHTML = resposta.map((fornecedor) => {
+               return `<tr>
+                        <td>${fornecedor.id}</td>
+                        <td>${fornecedor.cnpj}</td>
+                        <td>${fornecedor.nome}</td>
+                        <td>${fornecedor.nome_fantasia}</td>
+                        <td>${fornecedor.telefone}</td>
+                        <td>${fornecedor.email}</td>
+                        <td>${fornecedor.endereco.logradouro}, ${fornecedor.endereco.numero}, ${fornecedor.endereco.complemento}, ${fornecedor.endereco.bairro} - ${fornecedor.endereco.cidade}/${fornecedor.endereco.uf}</td>
+                        <td>
+                           <a href="#/fornecedores/editar/${fornecedor.id}" class="btn btn-warning">Alterar</a>
+                           <a href="#/fornecedores/remover/${fornecedor.id}" class="btn btn-danger remover" id="remover" data-id="${fornecedor.id}">Remover</a>
+                        </td>
+                     </tr>`;
+            }).join('');
+            _this.tabela.find('tbody').empty().html(fonecedoresHTML);
+
+            _this.tabela.on('click', '.remover', function (event) {
+               event.preventDefault();
+               var id = $(this).attr('data-id');
+               servicoFornecedor.remover(id);
+               window.location.reload()            
+            });
+         });
       };
    } // ControladoraListagemFornecedor
 
@@ -634,7 +572,6 @@ var app = {
       _this.cancelarModoEdicao = $('#cancelar_edicao');
       _this.obj = null;
 
-      _this.avatar = null;
       var pegarId = function pegarId(url, palavra) {
 
          // Terminando com "ID/palavra"
@@ -655,65 +592,9 @@ var app = {
       var criarOpcoesValidacao = function criarOpcoesValidacao() {
          var opcoes = {
             rules: {
-               "nome": {
-                  required: true,
-                  rangelength: [3, 50]
-               },
-               "sobrenome": {
-                  required: true,
-                  rangelength: [3, 50]
-               },
-               "login": {
-                  required: true
-               },
-               "loja": {
-                  required: true
-               },
-               "setor": {
-                  required: true
-               },
-               "password": {
-                  required: true,
-                  rangelength: [3, 20]
-               },
-
-               "password_confirmation": {
-                  required: true,
-                  equalTo: "#password"
-               }
             },
 
             messages: {
-               "nome": {
-                  required: 'O campo nome é obrigatório.',
-                  rangelength: $.validator.format("O campo nome deve ter entre {3} e {50} caracteres.")
-               },
-               "sobrenome": {
-                  required: 'O campo sobrenome é obrigatório.',
-                  rangelength: $.validator.format("O campo nome deve ter entre {3} e {50} caracteres.")
-               },
-
-               "login": {
-                  required: 'O campo login é obrigatório.'
-               },
-
-               "loja": {
-                  required: 'O campo loja é obrigatório.'
-               },
-
-               "setor": {
-                  required: 'O campo setor é obrigatório.'
-               },
-
-               "password": {
-                  required: 'O campo senha é obrigatório.',
-                  rangelength: $.validator.format("A senha deve ter entre {3} e {50} caracteres.")
-               },
-
-               "password_confirmation": {
-                  required: 'O campo confirmação de senha é obrigatório.',
-                  equalTo: "O campo senha e confirmação de senha devem ser iguais."
-               }
             }
          };
 
@@ -727,39 +608,17 @@ var app = {
             };
 
             _this.formulario.desabilitar(true);
-            $('#setor').val();
+
             var jqXHR = (window.location.href.search('editar') != -1) ? servicoFornecedor.atualizar(data, _this.obj.id) : servicoFornecedor.adicionar(data);
 
             jqXHR.done(function (resposta) {
                if (resposta.status) {
-
                   toastr.success(resposta.mensagem);
-                  if(_this.avatar !=  null){
-                     jqXHR = servicoFornecedor.atualizarAvatar(function (){
-                        var formData =  new FormData();
-                        formData.append('avatar', _this.avatar);
-                        return formData;
-                     }, _this.obj.id).done(function(response){
-                        if (resposta.status) {
-                           router.navigate('/colaboradores');
-                           toastr.success(resposta.mensagem);
-                        }
-                        else {
-                           terminado();
-                           if (resposta != undefined && resposta.erros)  distribuirErros(_this.formulario, resposta.erros);
 
-                           if (resposta != undefined && resposta.mensagem) toastr.error(resposta.mensagem);
-                        }
-                     });
-                  }
-                  else{
-                     router.navigate('/colaboradores');
-                  }
+                  router.navigate('/fornecedores');
                }
                else {
                   terminado();
-                  if (resposta != undefined && resposta.erros)  distribuirErros(_this.formulario, resposta.erros);
-
                   if (resposta != undefined && resposta.mensagem) toastr.error(resposta.mensagem);
                }
 
@@ -771,15 +630,29 @@ var app = {
 
       // Obtém o conteúdo atual do form como um objeto
       _this.conteudo = function conteudo() {
-         var data = new FormData(_this.formulario[0]);
-         return data;
+         return  (window.location.href.search('editar') != -1) ? {
+            id :   $('#id').val(),
+            cnpj :   $('#cnpj').val(),
+            nome :   $('#nome').val(),
+            nome_fantasia :   $('#nome_fantasia').val(),
+            email :   $('#email').val(),
+            telefone :   $('#telefone').val(),
+            cep :   $('#cep').val(),
+            logradouro :   $('#logradouro').val(),
+            numero :   $('#numero').val(),
+            complemento :   $('#complemento').val(),
+            bairro :   $('#bairro').val(),
+            cidade :   $('#cidade').val(),
+            uf :   $('#uf').val(),
+			} :  new FormData(_this.formulario[0]);
+
       };
 
       _this.configurarBotoes = function configurarBotoes() {
          _this.botaoSubmissao.on('click', _this.salvar);
-         
-         $('#pesquisar-cnpj').on('click', function() {
-            var cnpj = $('#cnpj').val().replace(/[^\d]+/g,'');
+
+         $('#pesquisar-cnpj').on('click', function () {
+            var cnpj = $('#cnpj').val().replace(/[^\d]+/g, '');
             let servicoReceitaWs = new app.ServicoReceitaWs();
             var jqXHR = servicoReceitaWs.consultarCNPJ(cnpj).done(function (resposta) {
                $('#nome').val(resposta.nome);
@@ -797,108 +670,42 @@ var app = {
          });
 
          $("#cnpj").inputmask("99.999.999/9999-99");
+         $("#telefone").inputmask("(99)99999-9660");
       };
 
       _this.definirForm = function definirForm(status) {
          _this.formulario.on('submit', false);
          _this.configurarBotoes();
+         if (window.location.href.search('editar') != -1) {
+            servicoFornecedor.editForm(pegarId(window.location.href, 'editar')).done(_this.desenhar);
+         }
       }
 
       // Desenha o objeto no formulário
       _this.desenhar = function desenhar(resposta) {
-         _this.obj = resposta.colaborador.original;
+         _this.obj = resposta.fornecedor.original;
          $('#id').val(_this.obj.id).trigger('focus').trigger('blur');
+         $('#cnpj').val(_this.obj.cnpj).trigger('focus').trigger('blur');
          $('#nome').val(_this.obj.nome).trigger('focus').trigger('blur');
-         $('#sobrenome').val(_this.obj.sobrenome).trigger('focus').trigger('blur');
-         $('#email').val(_this.obj.user.email).trigger('focus').trigger('blur');
-         $('#login').val(_this.obj.user.name).trigger('focus').trigger('blur');
-         if(_this.obj.avatar != null)$('.avatar:first').attr('src', _this.obj.avatar.caminho)
+         $('#nome_fantasia').val(_this.obj.nome_fantasia).trigger('focus').trigger('blur');
+         $('#email').val(_this.obj.email).trigger('focus').trigger('blur');
+         $('#telefone').val(_this.obj.telefone).trigger('focus').trigger('blur');
+         $('#cep').val(_this.obj.endereco.cep).trigger('focus').trigger('blur');
+         $('#logradouro').val(_this.obj.endereco.logradouro).trigger('focus').trigger('blur');
+         $('#numero').val(_this.obj.endereco.numero).trigger('focus').trigger('blur');
+         $('#complemento').val(_this.obj.endereco.complemento).trigger('focus').trigger('blur');
+         $('#bairro').val(_this.obj.endereco.bairro).trigger('focus').trigger('blur');
+         $('#cidade').val(_this.obj.endereco.cidade).trigger('focus').trigger('blur');
+         $('#uf').val(_this.obj.endereco.uf).trigger('focus').trigger('blur');
 
-         if (_this.obj.lojas != null) {
-            for (const index in _this.obj.lojas) {
-               var loja = _this.obj.lojas[index];
-               $('#lojas option').each(function (i, value) {
-                  if (parseInt($(this).val()) == loja.id) $(this).attr('selected', true);
-               });
-            }
-            $('#lojas').formSelect().trigger('focus').trigger('blur');
-         }
-
-         if (_this.obj.setor != null) {
-            for (const index in _this.obj.lojas) {
-               var setor = _this.obj.setor;
-               $('#setor option').each(function (i, value) {
-                  if (parseInt($(this).val()) == setor.id) $(this).attr('selected', true);
-               });
-            }
-            $('#setor').formSelect().trigger('focus').trigger('blur');
-         }
-
-         if (window.location.href.search('visualizar') != -1) {
-            _this.formulario.desabilitar(true);
-            _this.formulario.find('#botoes').desabilitar(false);
-            _this.formulario.find('#botoes').prepend(' <div class="col col-md-4 col-12 col-sm-5 col-lg-4"><button type="submit" id="remover" class="waves-effect waves-light btn white grey-text text-darken-4 col-12 quebra-linha"><i class="mdi mdi-delete red-text text-darken-4"></i>Remover</button></div>').promise().done(function () {
-               $('#botoes').find('#remover').on('click', _this.remover);
-            });
-				_this.formulario.find('#botoes').prepend(' <div class="col col-md-4 col-12 col-sm-5 col-lg-4"><button type="button" id="editar" class="waves-effect waves-light btn white grey-text text-darken-4 col-12 quebra-linha"><i class="mdi mdi-checkbox-marked-circle-outline orange-text text-accent-4 "></i>Editar</button></div>').promise().done(function () {
-					_this.formulario.find('#editar').on('click', function (event) {
-                  router.navigate('/editar-colaborador/' + _this.obj.id);
-               });
-            });
-
-         } else if (window.location.href.search('editar') != -1) {
-            _this.alterar = true;
-            var html = '';
-            html += '<div class="col col-md-4 col-12 col-sm-5 col-lg-4">';
-            html += '<button id="salvar" type="submit" class="waves-effect waves-light btn white grey-text text-darken-4 col-12 quebra-linha">';
-            html += '<i class="mdi mdi-checkbox-marked-circle-outline orange-text text-accent-4 ">';
-            html += '</i>salvar</button>';
-            html += '</div>';
-
-            _this.formulario.find('#botoes').prepend(html).promise().done(function () {
-               $('#salvar').on('click', _this.salvar);
-            });
+          if (window.location.href.search('editar') != -1) {
+            $('#salvar').on('click', _this.salvar);
          }
 
       };
 
       _this.salvar = function salvar() {
          _this.formulario.validate(criarOpcoesValidacao());
-      };
-
-      _this.remover = function remover() {
-         BootstrapDialog.show({
-            type: BootstrapDialog.TYPE_DANGER,
-            title: 'Deseja remover este colaborador?',
-            message: 'Id: ' + _this.obj.id + '.<br> Colaborador: ' + (_this.obj.nome + ' ' + _this.obj.sobrenome) + '.',
-            size: BootstrapDialog.SIZE_LARGE,
-            buttons: [{
-               label: '<u>S</u>im',
-               hotkey: 'S'.charCodeAt(0),
-               action: function (dialog) {
-                  servicoFornecedor.remover(_this.obj.id).done(function (resposta) {
-                     if (resposta.status) {
-                        router.navigate('/colaboradores');
-                        toastr.success('Colaborador removido com sucesso!');
-                        dialog.close();
-
-                     }
-                     else {
-                        if (resposta != undefined && resposta.mensagem) toastr.error(resposta.mensagem);
-
-                        dialog.close();
-                     }
-                  });
-               }
-            }, {
-               label: '<u>N</u>ão',
-               hotkey: 'N'.charCodeAt(0),
-               action: function (dialog) {
-                  dialog.close();
-               }
-            }
-            ]
-         });
       };
 
       // Configura os eventos do formulário

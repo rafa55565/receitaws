@@ -25,17 +25,5 @@
                 </ul>
             </div>
         </li>
-        
-        <li class="mb-1">
-            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#cliente-collapse" aria-expanded="false">
-                Clientes
-            </button>
-            <div class="collapse show" id="cliente-collapse">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li><a href="#/clientes" class="link-dark rounded">Listar</a></li>
-                    <li><a href="#/clientes/cadastrar" class="link-dark rounded">Cadastrar</a></li>
-                </ul>
-            </div>
-        </li>
     </ul>
 </div>

@@ -1,20 +1,24 @@
-<table class="fornecedor">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
-    </thead>
-    <tbody>
-    </tbody>
-  </table>
-  <script>
-    $(document).ready(function() {
-        var servicoFornecedor = new app.ServicoFornecedor();
-        var crltFornecedor = new app.ControladoraListagemFornecedor(servicoFornecedor);
+<table class="fornecedor table table-striped" id="fornecedor">
+  <thead>
+    <tr>
+      <th scope="col">#ID</th>
+      <th scope="col">CNPJ</th>
+      <th scope="col">Nome</th>
+      <th scope="col">Nome Fantasia</th>
+      <th scope="col">Telefone</th>
+      <th scope="col">email</th>
+      <th scope="col">Endereço</th>
+      <th scope="col">OPÇÕES</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<script>
+  $(document).ready(function() {
+      var servicoFornecedor = new app.ServicoFornecedor();
+      var crltFornecedor = new app.ControladoraListagemFornecedor(servicoFornecedor);
 
-        crltFornecedor.configurar();
-    }).promise().done(window.tirarTelaDeCarregamento);
+      crltFornecedor.configurar();
+  }).promise().done(window.tirarTelaDeCarregamento);
 </script>
