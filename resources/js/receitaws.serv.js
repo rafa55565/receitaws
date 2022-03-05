@@ -11,7 +11,7 @@
 	{ // Model
 		var _this = this;
 
-		// Cria um objeto de Endereco
+		// Cria um objeto de ReceitaWs
 
 		_this.consultarCNPJ = function consultarCNPJ(cnpj) {
 			return $.ajax({
