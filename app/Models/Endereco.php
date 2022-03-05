@@ -21,7 +21,7 @@ class Endereco extends Model
         'uf',
     ];
 
-    public function pessoas(){
-        return $this->belongsToMany(Pessoa::class, 'endereco_id');
+    public function fornecedores(){
+        return $this->belongsToMany(Fornecedor::class, 'endereco_id');
     }
 }
