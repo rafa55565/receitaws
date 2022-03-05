@@ -4,6 +4,11 @@ Este sistema foi desenvolvido sob encomenda da Rentatec.
 
 Documentação do laravel.
 
+Requisitos
+PHP 7.4
+Node v16.14.0
+npm 8.5.2
+composer 2.2.7
 
 Colocando o projeto para rodar
 
