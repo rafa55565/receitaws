@@ -1,0 +1,20 @@
+<table class="fornecedor">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Handle</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <script>
+    $(document).ready(function() {
+        var servicoFornecedor = new app.ServicoFornecedor();
+        var crltFornecedor = new app.ControladoraListagemFornecedor(servicoFornecedor);
+
+        crltFornecedor.configurar();
+    }).promise().done(window.tirarTelaDeCarregamento);
+</script>

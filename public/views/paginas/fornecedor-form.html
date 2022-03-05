@@ -1,0 +1,120 @@
+<section id="painel_formulario">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Cadastrar Fornecedor</h5>
+            <div class="row">
+                <div class="col-12  col-sm-12 col-md-12 col-lg-12">
+                    <form class="form-horizontal " method="post" id="forncedor_form">
+                        <input type="hidden" id="id" name="id" />
+                       
+                        <div class="row form-row">
+                            <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                                <label for="cnpj">*CNPJ:</label>
+
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control"  id="cnpj" name="cnpj" placeholder="CNPJ" aria-label="Pesquisar CNPJ" aria-describedby="pesquisar-cnpj">
+                                    <button class="btn btn-outline-secondary" type="button" id="pesquisar-cnpj">Pesquisar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-row">
+                            <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                                <label for="nome">*Nome:</label>
+                                <input type="text" id="nome" name="nome" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row form-row">
+                            <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                                <label for="nome_fantasia">*Nome Fantasia:</label>
+                                <input type="text" id="nome_fantasia" name="nome_fantasia" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row form-row">
+                            <div class="col-md-6 col-12 col-sm-6 col-lg-6">
+                                <label for="telefone">*Telefone:</label>
+                                <input type="text" id="telefone" name="telefone" class="form-control" />
+                            </div>
+                           
+                            <div class="col-md-6 col-12 col-sm-6 col-lg-6">
+                                <label for="email">*E-mail:</label>
+                                <input type="text" id="email" name="email" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row form-row">
+                            <div class="col-md-12 col-12 col-sm-12 col-lg-12">
+                                <label for="logradouro">*Logradouro:</label>
+                                <input type="text" id="logradouro" name="logradouro" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row form-row">
+                            <div class="col-md-4 col-12 col-sm-4 col-lg-4">
+                                <label for="cep">*CEP:</label>
+                                <input type="text" id="cep" name="cep" class="form-control" />
+                            </div>
+
+                            <div class="col-md-4 col-12 col-sm-4 col-lg-4">
+                                <label for="logradouro">*Numero:</label>
+                                <input type="number" id="numero" name="numero" class="form-control" />
+                            </div>
+
+                                                      
+                            <div class="col-md-4 col-12 col-sm-4 col-lg-4">
+                                <label for="complemento">*Complemento:</label>
+                                <input type="text" id="complemento" name="complemento" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row form-row">
+                            <div class="col-md-4 col-12 col-sm-4 col-lg-4">
+                                <label for="bairro">*Bairro:</label>
+                                <input type="text" id="bairro" name="bairro" class="form-control" />
+                            </div>
+                           
+                            <div class="col-md-4 col-12 col-sm-4 col-lg-4">
+                                <label for="cidade">*Cidade:</label>
+                                <input type="text" id="cidade" name="cidade" class="form-control" />
+                            </div>
+                            
+                            <div class="col-md-4 col-12 col-sm-4 col-lg-4">
+                                <label for="uf">*UF:</label>
+                                <input type="text" id="uf" name="uf" class="form-control" />
+                            </div>
+                        </div>
+    
+                        <div class="row form-row mt-3">
+                            <div class="col-md-4 col-12 col-sm-5 col-lg-4">
+                                <button type="submit" id="salvar" class="btn btn-success col-12">
+                                    <i
+                                        class="mdi mdi-checkbox-marked-circle-outline orange-text text-accent-4 "></i>
+                                    Salvar
+                                </button>
+                            </div>
+    
+                            <div class="col-md-4 col-12 col-sm-5 col-lg-4">
+                                <button class="btn btn-danger col-12">
+                                    <i class="mdi mdi-close-circle-outline yellow-text text-accent-4"></i>
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+<script>
+    $(document).ready(function () {
+        var servicoFornecedor = new app.ServicoFornecedor();
+        var crltFornecedor = new app.ControladoraFormFornecedor(servicoFornecedor);
+        crltFornecedor.configurar();
+    });
+</script>
